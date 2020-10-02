@@ -1,0 +1,7 @@
+php artisan make:migration create_mentors
+php artisan make:migration create_courses
+php artisan make:migration create_chapters
+php artisan make:migration create_lessons
+php artisan make:migration create_my_courses
+php artisan make:migration create_reviews
+php artisan make:migration create_image_courses
