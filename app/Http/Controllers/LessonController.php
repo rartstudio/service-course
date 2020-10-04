@@ -3,53 +3,55 @@
 namespace App\Http\Controllers;
 
 use App\Chapter;
-use App\Course;
+use App\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ChapterController extends Controller
+class LessonController extends Controller
 {
     public function index(Request $request)
     {
-        $chapters = Chapter::query();
-        $courseId = $request->query('course_id');
+        $lessons = Lesson::query();
 
-        $chapters->when($courseId, function($query) use ($courseId){
-            return $query->where('course_id','=',$courseId);
+        $chapterId = $request->query('chapter_id');
+
+        $lessons->when($chapterId, function($query) use ($chapterId){
+            return $query->where('chapter_id','=',$chapterId);
         });
 
         return response()->json([
             'status' => 'success',
-            'data' => $chapters->get()
-        ],200);
+            'data' => $lessons->get()
+        ]);
     }
 
     public function show($id)
     {
-        $chapter = Chapter::find($id);
-        if(!$chapter){
+        $lesson = Lesson::find($id);
+        if(!$lesson) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'chapter not found'
-            ],404);
+                'message' => 'lesson not found'
+            ], 404);
         }
-
+        
         return response()->json([
             'status' => 'success',
-            'data' => $chapter
-        ],200);
+            'data' => $lesson
+        ]);
     }
 
     public function create(Request $request)
     {
         $rules = [
             'name' => 'required|string',
-            'course_id' => 'required|integer'
+            'video' => 'required|string',
+            'chapter_id' => 'required|integer'
         ];
 
         $data = $request->all();
 
-        $validator = Validator::make($data, $rules);
+        $validator = Validator::make($data,$rules);
 
         if($validator->fails()){
             return response()->json([
@@ -58,20 +60,19 @@ class ChapterController extends Controller
             ]);
         }
 
-        $courseId = $request->input('course_id');
-        $course = Course::find($courseId);
-
-        if(!$course){
+        $chapterId = $request->input('chapter_id');
+        $chapter = Chapter::find($chapterId);
+        if(!$chapter){
             return response()->json([
                 'status' => 'error',
-                'message' => 'course not found'
+                'message' => 'chapter not found'
             ],404);
         }
 
-        $chapter = Chapter::create($data);
+        $lesson = Lesson::create($data);
         return response()->json([
             'status' => 'success',
-            'data' => $chapter
+            'data' => $lesson
         ],200);
     }
 
@@ -79,12 +80,13 @@ class ChapterController extends Controller
     {
         $rules = [
             'name' => 'string',
-            'course_id' => 'integer'
+            'video' => 'string',
+            'chapter_id' => 'integer'
         ];
 
         $data = $request->all();
 
-        $validator = Validator::make($data, $rules);
+        $validator = Validator::make($data,$rules);
 
         if($validator->fails()){
             return response()->json([
@@ -93,48 +95,47 @@ class ChapterController extends Controller
             ]);
         }
 
-        $chapter = Chapter::find($id);
-        if(!$chapter) {
+        $lesson = Lesson::find($id);
+        if(!$lesson){
             return response()->json([
                 'status' => 'error',
-                'message' => 'chapter not found'
+                'message' => 'lesson not found'
             ],404);
         }
 
-        $courseId = $request->input('course_id');
-        if($courseId){
-            $course = Course::find($courseId);
-            if(!$course){
+        $chapterId = $request->input('chapter_id');
+        if($chapterId){
+            $chapter = Chapter::find($chapterId);
+            if(!$chapter){
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'course not found'
+                    'message' => 'chapter not found'
                 ],404);
             }
         }
 
-        $chapter->fill($data);
-        $chapter->save();
-
+        $lesson->fill($data);
+        $lesson->save();
         return response()->json([
             'status' => 'success',
-            'data' => $chapter
+            'data' => $lesson
         ],200);
     }
-    
+
     public function destroy($id)
     {
-        $chapter = Chapter::find($id);
-        if(!$chapter){
+        $lesson = Lesson::find($id);
+        if(!$lesson){
             return response()->json([
                 'status' => 'error',
-                'message' => 'chapter not found'
-            ],404);
+                'message' => 'lesson not found'
+            ]);
         }
 
-        $chapter->delete();
+        $lesson->delete();
         return response()->json([
             'status' => 'success',
-            'message' => 'chapter deleted'
-        ],200);
+            'message' => 'lesson deleted'
+        ]);
     }
 }

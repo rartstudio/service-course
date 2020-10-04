@@ -56,7 +56,7 @@ class CourseController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => $validator->errors()
-            ],404);
+            ]);
         }
 
         //get data mentorid from request
@@ -103,7 +103,7 @@ class CourseController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => $validator->errors()
-            ],404);
+            ]);
         }
 
         $course = Course::find($id);

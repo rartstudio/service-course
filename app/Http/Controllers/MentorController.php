@@ -56,7 +56,7 @@ class MentorController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => $validator->errors()
-            ],404);
+            ]);
         }
 
         //create data
@@ -86,7 +86,7 @@ class MentorController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => $validator->errors()
-            ],404);
+            ]);
         }
 
         $mentor = Mentor::find($id);
