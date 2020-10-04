@@ -8,8 +8,13 @@ class Mentor extends Model
 {
     protected $table = 'mentors';
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:m:s',
+        'updated_at' => 'datetime:Y-m-d H:m:s'
+    ];
+
     protected $fillable = [
-        'name','profile','email','prosession'
+        'name','profile','email','profession'
     ];
 
     public function course()
