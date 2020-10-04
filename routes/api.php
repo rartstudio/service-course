@@ -20,5 +20,6 @@ Route::post('mentors', 'MentorController@create');
 Route::put('mentors/{id}', 'MentorController@update');
 Route::delete('mentors/{id}', 'MentorController@destroy');
 
+Route::get('courses','CourseController@index');
 Route::post('courses', 'CourseController@create');
 Route::put('courses/{id}', 'CourseController@update');
