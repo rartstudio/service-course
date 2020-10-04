@@ -30,11 +30,6 @@ class CourseController extends Controller
         ]);
     }
 
-    public function show()
-    {
-
-    }
-
     public function create(Request $request)
     {
         //rule schema
@@ -136,6 +131,25 @@ class CourseController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $course
+        ]);
+    }
+
+    public function destroy($id)
+    {   
+        $course = Course::find($id);
+
+        if(!$course){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'course not found'
+            ],404);
+        }
+
+        $course->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'course deleted'
         ]);
     }
 }
