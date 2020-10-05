@@ -12,6 +12,11 @@ class ImageCourse extends Model
         'course_id', 'image'
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:m:s',
+        'updated_at' => 'datetime:Y-m-d H:m:s'
+    ];
+
     public function course()
     {
         return $this->belongsTo('App\Course');
