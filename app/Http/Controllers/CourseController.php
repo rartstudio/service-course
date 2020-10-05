@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Chapter;
 use App\Course;
 use App\Mentor;
+use App\MyCourse;
+use App\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,6 +30,60 @@ class CourseController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $courses->paginate(10)
+        ]);
+    }
+
+    public function show($id)
+    {
+        $course = Course::with(['chapters','mentor','images','chapters.lessons'])->find($id);
+        if(!$course){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'course not found'
+            ],404);
+        }
+
+        $reviews = Review::where('course_id','=',$id)->get()->toArray();
+        if(count($reviews) > 0){
+            //find column user_id from reviews array and userIds return array
+            $userIds = array_column($reviews,'user_id');
+
+            //call user service to get users data based on userIds
+            $users = getUserByIds($userIds);
+
+            //checking if status error (user service down)
+            //if yes return empty array
+            //if no set user data
+            if($users['status'] === 'error'){
+                $reviews = [];
+            } else {
+                foreach($reviews as $key => $review){
+                    //search index array by id user 
+                    $userIndex = array_search($review['user_id'],array_column($users['data'],'id'));
+                    
+                    //set new key value pair for user data in review
+                    $reviews[$key]['users'] = $users['data'][$userIndex];
+                }                
+            }
+        }
+
+        $totalStudent = MyCourse::where('course_id','=',$id)->count();
+
+        //one lessons == one video
+        //get all related lesson with chapter and count it
+        //format will relation_count
+        $totalVideos = Chapter::where('course_id','=',$id)->withCount('lessons')->get()->toArray();
+
+        //find column lesson_count from totalvideos and turn it to new array then sum it
+        $finalTotalVideos = array_sum(array_column($totalVideos,'lessons_count'));
+
+        $course['reviews'] = $reviews;
+        $course['total_student'] = $totalStudent;
+        $course['total_videos'] = $finalTotalVideos;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $course
         ]);
     }
 
