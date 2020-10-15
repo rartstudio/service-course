@@ -29,7 +29,7 @@ class CourseController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $courses->paginate(10)
+            'data' => $courses->with('images')->paginate(10)
         ]);
     }
 
