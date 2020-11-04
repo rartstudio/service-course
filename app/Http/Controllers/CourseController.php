@@ -35,7 +35,7 @@ class CourseController extends Controller
 
     public function show($id)
     {
-        $course = Course::with(['chapters','mentor','images','chapters.lessons'])->find($id);
+        $course = Course::with(['mentor','images','chapters.lessons'])->find($id);
         if(!$course){
             return response()->json([
                 'status' => 'error',
@@ -44,12 +44,15 @@ class CourseController extends Controller
         }
 
         $reviews = Review::where('course_id','=',$id)->get()->toArray();
+
         if(count($reviews) > 0){
             //find column user_id from reviews array and userIds return array
             $userIds = array_column($reviews,'user_id');
 
             //call user service to get users data based on userIds
             $users = getUserByIds($userIds);
+
+            // dd($users);
 
             //checking if status error (user service down)
             //if yes return empty array
